@@ -2,7 +2,7 @@ require 'net/http'
 require 'net/https'
 require 'singleton'
 require 'uri'
-require 'rmail'
+require 'mail'
 require 'text-table'
 require 'date'
 require 'pp'
@@ -127,14 +127,16 @@ module RT
       data_string.gsub!(/^\n/,"") # RMail barfs on Messages that start with a newline
       data_string.gsub!(/^[^:]+$/,"") # Remove any non-field lines
 
-      data = RMail::Parser.read(data_string).header
-      out = Hash.new
+      # data = RMail::Parser.read(data_string).header
+      # out = Hash.new
+      data = Mail.read_from_string(data_string).header
 
-      # Convert from RMail::Header to vanilla Hash
+      # Convert from Mail::Header to vanilla Hash
       out = Hash.new
-      data.each do |key, value|
-        cleaned_key = key.gsub(/\./,"_") # Mongo doesn't like periods in key names
-        out[cleaned_key] = value
+      # pp data.fields
+      data.fields.each do |field|
+        cleaned_key = field.name.gsub(/\./,"_") # Mongo doesn't like periods in key names
+        out[cleaned_key] = field.value
       end
       return out
     end
