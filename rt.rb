@@ -9,7 +9,7 @@ require 'pp'
 require 'yaml'
 require File.expand_path("../my_config.rb", __FILE__)
 
-DEBUG=false
+DEBUG=true
 
 
 
